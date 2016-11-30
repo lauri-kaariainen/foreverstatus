@@ -1,0 +1,21 @@
+{
+  "name": "foreverstatus",
+  "version": "0.0.1",
+  "description": "Forever.js Software (JS and Python) error reporter",
+  "main": "foreverstatus.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "forever",
+    "status",
+    "error",
+    "exception",
+    "report"
+  ],
+  "author": "Lauri Kääriäinen",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.13.4"
+  }
+}
