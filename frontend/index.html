@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+	
+    <title>Forever's servers run status</title>
+
+    <style> 
+		.green {
+			#background-color: lightgreen;
+			background: linear-gradient(135deg, #9dd53a 65%,#7cbc0a 100%);
+		}
+		.red {
+			#background-color:#FD6D6D;
+			background: linear-gradient(to right, #ff3019 52%,#cf0404 100%);
+		}
+		.statusDiv {
+			font-family: monospace;
+			display:inline-block;
+			text-align: center;
+			border: 2px solid grey;
+			padding: 2px 2px 2px 2px;
+		    height: 60px;
+		    font-size:100%;
+    		flex: 30% 1;
+		}
+		#containerDiv {
+		    align-content: space-around;
+		    display: flex;
+		    flex-direction: row;
+		    flex-wrap: wrap;
+		    height: auto;
+			max-width:900px;
+			margin-left:auto;
+			margin-right:auto;
+		}
+		
+	</style>
+    <!-- <script src="superagent.js"></script> -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/es6-promise/3.2.1/es6-promise.min.js"></script>
+	<script src="nanoajax.min.js"></script>
+  </head>
+
+  <body> 
+
+  
+
+	<div id="containerDiv" class="container">
+	</div> <!-- /containerdiv -->
+	
+	<script>
+		var globalState = {};
+		globalState.queriedData = "not initialized";
+		start();
+		
+		function start(){
+			
+			nanoajax.ajax(
+				{url:'./ajax/statuses'}, 
+				function(code,responseText){
+					globalState.queriedData = JSON.parse(responseText);
+					renderStatuses(JSON.parse(responseText))
+						.then(window.onresize);
+					
+				}
+			);
+
+		
+		}
+		function renderStatuses(response,fontSize){
+			return new Promise(function(resolve,reject){
+				clearStatuses()
+					.then(function(){
+						var statuses = response;
+						var htmlStatusElements = 
+							statuses
+								.map(function(status){
+									var newDiv = document.createElement('div');
+									newDiv.classList.add('statusDiv');
+									newDiv.classList.add(status.status ? "green":"red");
+									newDiv.innerHTML = status.name;
+									newDiv.style.fontSize = fontSize ? fontSize : "100%";
+									newDiv.title = status.id;
+									return newDiv;})
+								.forEach(function(htmlStatusElem){
+									document.querySelector('#containerDiv').appendChild(htmlStatusElem)});
+						resolve();
+					});
+			});
+			function clearStatuses(){
+				return new Promise(function(resolve,reject){
+					var statusDivs = document.querySelectorAll('.statusDiv');
+					for(var i =0;i< statusDivs.length;i++)
+						statusDivs[i].parentNode.removeChild(statusDivs[i]);
+					resolve();
+				})
+			}
+		}
+
+		
+		window.onresize = function(e){
+			if(!document.querySelector('.statusDiv')){
+				alert("too early!");
+				return;
+			}
+			var statusWidth = document.querySelector('.statusDiv').offsetWidth;
+			//console.log(statusWidth);
+			if(statusWidth < 180)
+				renderStatuses(globalState.queriedData,statusWidth/180*100+"%");
+		}
+		
+	</script>
+ 
+  </body>
+</html>
