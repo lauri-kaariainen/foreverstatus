@@ -11,3 +11,5 @@ You run this software and get a sweet json status list from <a href="http://loca
 #what it does
 <b>foreverstatus</b> reads statuses from command 'forever logs' and parses the logfiles 
 using grep. Then it looks if it sees an error after which the software wasn't restarted.
+#example frontend
+https://lauri-kaariainen.github.io/foreverstatus/frontend/index.html
